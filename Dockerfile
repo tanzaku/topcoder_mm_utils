@@ -15,4 +15,4 @@ RUN pip3 install --upgrade pip && \
 
 ADD src/main.py /app/bin/main.py
 
-CMD python3 /app/bin/main.py
+ENTRYPOINT ["python3", "/app/bin/main.py"]
