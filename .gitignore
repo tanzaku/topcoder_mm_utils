@@ -1,0 +1,8 @@
+screenshot/
+profile/
+bin/
+lib/
+test/
+MEMO.md
+*.cfg
+docker-compose-local.yml

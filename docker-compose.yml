@@ -1,0 +1,18 @@
+version: '3'
+services:
+  topcoder-mm-submit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "topcoder-mm-submit"
+    tty: true
+    volumes:
+      - $PWD:/data
+    working_dir: /data
+    environment:
+      - TZ=Asia/Tokyo
+      - USERNAME=tanzaku
+      - PASSWORD=XXXXXXXXX
+      - CHALLENGE_ID=30092303
+      - SUBMIT_FILE_PATH=/data/test/python-example.zip
+      - SCREENSHOT_DIR=/data/screenshot
