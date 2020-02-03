@@ -9,9 +9,24 @@ services:
     working_dir: /data
     environment:
       - TZ=Asia/Tokyo
-      - USERNAME=tanzaku
-      - PASSWORD=XXXXXXXX
-      - CHALLENGE_ID=30092303
-      - SUBMIT_FILE_PATH=/data/test/python-example.zip
-      - SCREENSHOT_DIR=/data/screenshot
-      # - DRY_RUN=1
+      - TC_USERNAME=
+      - TC_PASSWORD=
+      - CHALLENGE_ID=
+      - SUBMIT_FILE_PATH=
+      - SCREENSHOT_DIR=
+      - DRY_RUN=
+  topcoder-mm-standings-scrape:
+    image: tanzaku/topcoder_mm_utils:latest
+    container_name: "topcoder-mm-standings-scrape"
+    tty: true
+    environment:
+      - TZ=Asia/Tokyo
+      - TC_USERNAME=
+      - TC_PASSWORD=
+      - SCREENSHOT_DIR=
+      - PG_DB_HOST=
+      - PG_DB_USERNAME=
+      - PG_DB_PASSWORD=
+      - PG_DB_NAME=
+      - PG_DB_PORT=
+  

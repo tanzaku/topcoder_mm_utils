@@ -17,8 +17,6 @@ RUN pip3 install --upgrade pip && \
     pip install selenium && \
     pip install psycopg2
 
-ADD src/main.py /app/bin/main.py
 ADD src/scrape.py /app/bin/scrape.py
 
-# CMD ["python3", "/app/bin/main.py"]
 CMD ["python3", "/app/bin/scrape.py"]

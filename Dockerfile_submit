@@ -9,16 +9,12 @@ RUN apk add --update \
     chromium-chromedriver \
     python3 \
     postgresql-dev \
-    gcc libc-dev \
-    python3-dev
+    gcc libc-dev
 
 RUN pip3 install --upgrade pip && \
     # pip install "chromedriver-binary<$(chrome --version | awk '{ print $NF }' )" && \
-    pip install selenium && \
-    pip install psycopg2
+    pip install selenium
 
 ADD src/main.py /app/bin/main.py
-ADD src/scrape.py /app/bin/scrape.py
 
-# CMD ["python3", "/app/bin/main.py"]
-CMD ["python3", "/app/bin/scrape.py"]
+CMD ["python3", "/app/bin/main.py"]

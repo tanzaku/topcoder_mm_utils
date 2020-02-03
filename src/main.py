@@ -6,18 +6,18 @@ from selenium.common.exceptions import NoSuchElementException
 import os
 from selenium.webdriver.common.action_chains import ActionChains
 
-username = os.getenv('USERNAME')
-password = os.getenv('PASSWORD')
+username = os.getenv('TC_USERNAME')
+password = os.getenv('TC_PASSWORD')
 challenge_id = os.getenv('CHALLENGE_ID')
 submit_file_path = os.getenv('SUBMIT_FILE_PATH')
 screenshot_dir = os.getenv('SCREENSHOT_DIR')
 dry_run = os.getenv('DRY_RUN')
 
 if username is None:
-    raise ValueError('Environment variable USERNAME is required.')
+    raise ValueError('Environment variable TC_USERNAME is required.')
 
 if password is None:
-    raise ValueError('Environment variable PASSWORD is required.')
+    raise ValueError('Environment variable TC_PASSWORD is required.')
 
 if challenge_id is None:
     raise ValueError('Environment variable CHALLENGE_ID is required.')
