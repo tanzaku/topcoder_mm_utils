@@ -101,6 +101,8 @@ def get_standings(challenge_id):
 
         time.sleep(60)
         screenshot('open_standings_page.png')
+
+        # 順位表ロード待ち
         try:
             # 大分類(Rank User Score)
             # TODO 大分類が見つかったらtryの文脈から抜ける
@@ -111,7 +113,12 @@ def get_standings(challenge_id):
             # standings.find_element_by_xpath('./div[contains(text(), "Rank")]')
             # standings.find_element_by_xpath('./div[contains(text(), "User")]')
             # standings.find_element_by_xpath('./div[contains(text(), "Score")]')
+        except NoSuchElementException as e:
+            print(f'{i}th try is failure. Not loaded page yet.', e)
+            continue
 
+        # 順位表のカラムを構築
+        try:
             # 小分類(Rank(Final Provisional), User(Rating Username), Score(Final Provisional Time))
             standings_titles = standings.find_element_by_xpath(
                 'following-sibling::div')
@@ -137,27 +144,31 @@ def get_standings(challenge_id):
                 titles.append(text)
 
             titles.append('History')
-            table = list()
-            try:
-                i = 0
-                while True:
-                    print('user', i)
-                    userdata = defaultdict(str)
-                    column_index = 0
-                    for e in standings_user.find_elements_by_xpath('descendant::*[not(*)]'):
-                        text = e.text.strip()
-                        if text:
-                            userdata[titles[column_index]] = text
-                            column_index += 1
-                    table.append(userdata)
-                    standings_user = standings_user.find_element_by_xpath(
-                        'following-sibling::div')
-                    i += 1
-            except NoSuchElementException as e:
-                print('End of users', e)
-            return (titles, table)
         except NoSuchElementException as e:
-            print(f'{i}th try is failure. Not loaded page yet.', e)
+            print('Empty competitor.', e)
+            return (None, None)
+
+        # 順位表をパース
+        table = list()
+        try:
+            i = 0
+            while True:
+                print('user', i)
+                userdata = defaultdict(str)
+                column_index = 0
+                for e in standings_user.find_elements_by_xpath('descendant::*[not(*)]'):
+                    text = e.text.strip()
+                    if text:
+                        userdata[titles[column_index]] = text
+                        column_index += 1
+                table.append(userdata)
+                standings_user = standings_user.find_element_by_xpath(
+                    'following-sibling::div')
+                i += 1
+        except NoSuchElementException as e:
+            print('End of users', e)
+
+        return (titles, table)
 
 
 init_driver()
@@ -167,14 +178,20 @@ pg_db_url = f'postgresql://{pg_db_username}:{pg_db_password}@{pg_db_host}:{pg_db
 connection = psycopg2.connect(pg_db_url)
 
 with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-    cur.execute("select id, tc_match_id from ms_crawling_match")
+    cur.execute("select id, tc_match_id, enable_crawling from ms_crawling_match")
     crawling_matches = cur.fetchall()
 
 with connection.cursor() as cur:
     for crawling_match in crawling_matches:
         print('crawling match', crawling_match)
 
+        if not crawling_match['enable_crawling']:
+            continue
+
         (titles, table) = get_standings(crawling_match['tc_match_id'])
+
+        if titles == None:
+            continue
 
         dt = datetime.now()
         stmt = f'''insert into ms_crawling(match_id, crawling_at) values({crawling_match['id']}, '{dt}') returning id'''
