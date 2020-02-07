@@ -96,12 +96,17 @@ def submit():
         '//div[@aria-label="Select file to upload"]')
 
     show_upload_box.click()
-    time.sleep(1)
-    screenshot('open_upload_form.png')
+    for retry in range(3):
+        time.sleep(3)
+        try:
+            screenshot('open_upload_form.png')
 
-    # アップロード
-    upload_box = driver.find_element_by_xpath('//input[@type="file"]')
-    upload_box.send_keys(submit_file_path)
+            # アップロード
+            upload_box = driver.find_element_by_xpath('//input[@type="file"]')
+            upload_box.send_keys(submit_file_path)
+            break
+        except NoSuchElementException as e:
+            print('Not loaded yet', e)
 
     # アップロード終了まで待つ
     time.sleep(5)
