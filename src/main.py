@@ -76,12 +76,25 @@ def submit():
     global driver
     global submit_file_path
 
-    driver.get(f'https://www.topcoder.com/challenges/{challenge_id}/submit')
-    screenshot('open_submit_page.png')
+    for retry in range(3):
+        time.sleep(3)
+        try:
+            driver.get(
+                f'https://www.topcoder.com/challenges/{challenge_id}/submit')
+            screenshot('open_submit_page.png')
+
+            # アップロードフォームの存在チェック
+            driver.find_element_by_xpath(
+                '//div[@aria-label="Select file to upload"]')
+
+            break
+        except NoSuchElementException as e:
+            print('Not loaded yet', e)
 
     # アップロードフォームを表示
     show_upload_box = driver.find_element_by_xpath(
         '//div[@aria-label="Select file to upload"]')
+
     show_upload_box.click()
     time.sleep(1)
     screenshot('open_upload_form.png')
