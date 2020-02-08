@@ -98,6 +98,8 @@ def get_standings(challenge_id):
             print(
                 f'Current url is {driver.current_url}. Connect to {submisisons_url}')
             driver.get(submisisons_url)
+        else:
+            driver.refresh()
 
         time.sleep(60)
         screenshot('open_standings_page.png')

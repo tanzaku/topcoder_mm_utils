@@ -67,23 +67,21 @@ def login():
         screenshot('fill_login_form.png')
         password_box.submit()
         print('login')
-        time.sleep(5)
+        time.sleep(10)
     except NoSuchElementException as e:
         print('Already logged in?', e)
-
 
 def submit():
     global driver
     global submit_file_path
 
-    try:
-        driver.get(
-            f'https://www.topcoder.com/challenges/{challenge_id}/submit')
+    screenshot('before_move_submit_page.png')
 
-    for retry in range(3):
-        time.sleep(10)
+    driver.get(
+        f'https://www.topcoder.com/challenges/{challenge_id}/submit')
+
+    for retry in range(10):
         try:
-            driver.refresh()
             screenshot('open_submit_page.png')
 
             # アップロードフォームの存在チェック
@@ -93,14 +91,15 @@ def submit():
             break
         except NoSuchElementException as e:
             print('Not loaded yet', e)
+            driver.refresh()
+            time.sleep(10)
 
     # アップロードフォームを表示
     show_upload_box = driver.find_element_by_xpath(
         '//div[@aria-label="Select file to upload"]')
-
     show_upload_box.click()
-    for retry in range(3):
-        time.sleep(3)
+    for retry in range(10):
+        time.sleep(10)
         try:
             screenshot('open_upload_form.png')
 
@@ -112,31 +111,43 @@ def submit():
             print('Not loaded yet', e)
 
     # アップロード終了まで待つ
-    time.sleep(8)
-    screenshot('uploaded.png')
+    for retry in range(10):
+        time.sleep(10)
+        try:
+            screenshot('uploaded.png')
 
-    # 同意しますか？のチェックボックス
-    agree_box = driver.find_element_by_xpath('//input[@id="agree"]')
+            # 同意しますか？のチェックボックス
+            agree_box = driver.find_element_by_xpath('//input[@id="agree"]')
 
-    # なぜか`agree_box.click()`が動かないのでActionChainsを使った
-    actions = ActionChains(driver)
-    actions.move_to_element(agree_box).click().perform()
+            # なぜか`agree_box.click()`が動かないのでActionChainsを使った
+            actions = ActionChains(driver)
+            actions.move_to_element(agree_box).click().perform()
 
-    # submit
-    submit_box = driver.find_element_by_xpath('//button[@type="submit"]')
+            # submit
+            submit_box = driver.find_element_by_xpath('//button[@type="submit"]')
 
-    global dry_run
-    if dry_run is None or dry_run == '0':
-        submit_box.click()
-        print('submit')
+            global dry_run
+            if dry_run is None or dry_run == '0':
+                submit_box.click()
+                print('submit')
 
-    time.sleep(3)
+            time.sleep(3)
 
-    screenshot('result.png')
+            screenshot('result.png')
+            break
+        except NoSuchElementException as e:
+            print('Not uploaded yet', e)
 
 
-init_driver()
-login()
-submit()
+
+for retry in range(5):
+    init_driver()
+    try:
+        login()
+        submit()
+        break
+    except Exception as e:
+        print('Retry all')
+    driver.quit()
 
 driver.quit()
