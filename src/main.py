@@ -67,7 +67,7 @@ def login():
         screenshot('fill_login_form.png')
         password_box.submit()
         print('login')
-        time.sleep(3)
+        time.sleep(5)
     except NoSuchElementException as e:
         print('Already logged in?', e)
 
@@ -76,11 +76,14 @@ def submit():
     global driver
     global submit_file_path
 
+    try:
+        driver.get(
+            f'https://www.topcoder.com/challenges/{challenge_id}/submit')
+
     for retry in range(3):
-        time.sleep(3)
+        time.sleep(10)
         try:
-            driver.get(
-                f'https://www.topcoder.com/challenges/{challenge_id}/submit')
+            driver.refresh()
             screenshot('open_submit_page.png')
 
             # アップロードフォームの存在チェック
@@ -109,7 +112,7 @@ def submit():
             print('Not loaded yet', e)
 
     # アップロード終了まで待つ
-    time.sleep(5)
+    time.sleep(8)
     screenshot('uploaded.png')
 
     # 同意しますか？のチェックボックス
