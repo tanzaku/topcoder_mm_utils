@@ -30,6 +30,9 @@ screenshot_index = 0
 
 
 def screenshot(filename):
+    """
+    スクリーンショットに連番をつけて保存する
+    """
     global driver
     global screenshot_dir
     global screenshot_index
@@ -40,6 +43,9 @@ def screenshot(filename):
 
 
 def init_driver():
+    """
+    webdriverの初期化
+    """
     global driver
     options = webdriver.ChromeOptions()
     # options.add_argument('--user-data-dir=./profile')
@@ -56,6 +62,9 @@ def init_driver():
 
 
 def login():
+    """
+    Topcoderへのログイン
+    """
     global driver
     try:
         driver.get('https://accounts.topcoder.com/member')
@@ -71,7 +80,11 @@ def login():
     except NoSuchElementException as e:
         print('Already logged in?', e)
 
+
 def submit():
+    """
+    提出
+    """
     global driver
     global submit_file_path
 
@@ -124,7 +137,8 @@ def submit():
             actions.move_to_element(agree_box).click().perform()
 
             # submit
-            submit_box = driver.find_element_by_xpath('//button[@type="submit"]')
+            submit_box = driver.find_element_by_xpath(
+                '//button[@type="submit"]')
 
             global dry_run
             if dry_run is None or dry_run == '0':
@@ -137,7 +151,6 @@ def submit():
             break
         except NoSuchElementException as e:
             print('Not uploaded yet', e)
-
 
 
 for retry in range(5):
